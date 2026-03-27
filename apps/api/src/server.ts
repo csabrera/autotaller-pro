@@ -1,5 +1,8 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import fastifyStatic from '@fastify/static';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { authRoutes } from './modules/auth/auth.routes.js';
 import { usuariosRoutes } from './modules/usuarios/usuarios.routes.js';
 import { catalogosRoutes } from './modules/catalogos/catalogos.routes.js';
@@ -17,7 +20,7 @@ import { portalRoutes } from './modules/portal/portal.routes.js';
 const app = Fastify({ logger: true });
 
 await app.register(cors, {
-  origin: ['http://localhost:5175'],
+  origin: process.env.NODE_ENV === 'production' ? true : ['http://localhost:5175'],
   credentials: true,
 });
 
@@ -40,6 +43,26 @@ await app.register(portalRoutes);
 app.get('/api/health', async () => {
   return { status: 'ok', timestamp: new Date().toISOString() };
 });
+
+// En producción: servir frontend estático
+if (process.env.NODE_ENV === 'production') {
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const frontendPath = path.join(__dirname, '../../web/dist');
+
+  await app.register(fastifyStatic, {
+    root: frontendPath,
+    prefix: '/',
+    decorateReply: false,
+  });
+
+  // SPA fallback: rutas que no son /api devuelven index.html
+  app.setNotFoundHandler(async (request, reply) => {
+    if (request.url.startsWith('/api')) {
+      return reply.status(404).send({ error: 'Ruta no encontrada' });
+    }
+    return reply.sendFile('index.html');
+  });
+}
 
 // Start
 const start = async () => {
