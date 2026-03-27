@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoTaller Pro - Manual de Usuario</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    color: #1e293b;
+    line-height: 1.7;
+    font-size: 14px;
+    background: #fff;
+  }
+
+  @media print {
+    body { font-size: 11px; }
+    .page-break { page-break-before: always; }
+    .no-print { display: none; }
+    .cover { height: 100vh; }
+  }
+
+  /* Cover */
+  .cover {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #f97316 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center;
+    padding: 40px;
+  }
+  .cover h1 { font-size: 48px; font-weight: 900; margin-bottom: 8px; }
+  .cover .subtitle { font-size: 20px; font-weight: 300; opacity: 0.9; margin-bottom: 40px; }
+  .cover .badge { background: #f97316; padding: 8px 24px; border-radius: 50px; font-weight: 700; font-size: 14px; }
+  .cover .version { margin-top: 40px; opacity: 0.5; font-size: 12px; }
+  .cover .logo { font-size: 80px; margin-bottom: 20px; }
+
+  /* Content */
+  .content { max-width: 800px; margin: 0 auto; padding: 40px 30px; }
+
+  h2 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #f97316;
+    margin: 40px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 3px solid #f97316;
+  }
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 24px 0 12px;
+  }
+  h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #475569;
+    margin: 16px 0 8px;
+  }
+  p { margin-bottom: 12px; color: #475569; }
+  strong { color: #1e293b; }
+
+  /* Table of contents */
+  .toc { background: #f8fafc; border-radius: 12px; padding: 30px; margin: 30px 0; }
+  .toc h3 { margin-top: 0; color: #f97316; }
+  .toc ol { padding-left: 24px; }
+  .toc li { margin: 6px 0; color: #475569; }
+  .toc li strong { color: #1e293b; }
+
+  /* Info boxes */
+  .info-box {
+    background: #f0f9ff;
+    border-left: 4px solid #3b82f6;
+    padding: 16px 20px;
+    border-radius: 0 8px 8px 0;
+    margin: 16px 0;
+  }
+  .info-box.warning {
+    background: #fffbeb;
+    border-left-color: #f59e0b;
+  }
+  .info-box.success {
+    background: #f0fdf4;
+    border-left-color: #10b981;
+  }
+  .info-box.orange {
+    background: #fff7ed;
+    border-left-color: #f97316;
+  }
+  .info-box p { margin: 0; color: #1e293b; }
+
+  /* Steps */
+  .step {
+    display: flex;
+    gap: 16px;
+    margin: 16px 0;
+    align-items: flex-start;
+  }
+  .step-num {
+    background: #f97316;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .step-content { flex: 1; }
+  .step-content p { margin: 0; }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+  th {
+    background: #f97316;
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #475569;
+  }
+  tr:nth-child(even) { background: #f8fafc; }
+
+  /* Flow diagram */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 16px 0;
+  }
+  .flow-item {
+    background: #f97316;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .flow-arrow { color: #94a3b8; font-size: 18px; }
+
+  /* URL box */
+  .url-box {
+    background: #1e293b;
+    color: #f97316;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 14px;
+    margin: 8px 0;
+  }
+
+  /* Kbd */
+  kbd {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-family: monospace;
+    font-size: 12px;
+    color: #1e293b;
+  }
+
+  .module-header {
+    background: linear-gradient(135deg, #0f172a, #334155);
+    color: white;
+    padding: 20px 24px;
+    border-radius: 12px;
+    margin: 30px 0 20px;
+  }
+  .module-header h3 { color: #f97316; margin: 0 0 4px; font-size: 20px; }
+  .module-header p { color: #94a3b8; margin: 0; font-size: 13px; }
+
+  ul { padding-left: 20px; margin: 8px 0; }
+  li { margin: 4px 0; color: #475569; }
+
+  .footer {
+    text-align: center;
+    padding: 40px;
+    color: #94a3b8;
+    font-size: 11px;
+    border-top: 1px solid #e2e8f0;
+    margin-top: 60px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== PORTADA ==================== -->
+<div class="cover">
+  <div class="logo">🔧</div>
+  <h1>AutoTaller Pro</h1>
+  <p class="subtitle">Sistema de Gestión Integral para Talleres Automotrices</p>
+  <span class="badge">Manual de Usuario v1.0</span>
+  <p class="version">Marzo 2026 — Todos los derechos reservados</p>
+</div>
+
+<!-- ==================== CONTENIDO ==================== -->
+<div class="content">
+
+<div class="page-break"></div>
+
+<!-- ÍNDICE -->
+<div class="toc">
+  <h3>Contenido</h3>
+  <ol>
+    <li><strong>Introducción</strong> — Qué es AutoTaller Pro</li>
+    <li><strong>Acceso al Sistema</strong> — Login empleados y portal cliente</li>
+    <li><strong>Dashboard</strong> — Panel principal con indicadores</li>
+    <li><strong>Vehículos & Clientes</strong> — Registro y gestión</li>
+    <li><strong>Órdenes de Trabajo</strong> — Flujo completo de servicio</li>
+    <li><strong>Servicios & Catálogo</strong> — Servicios preventivos y correctivos</li>
+    <li><strong>Inventario</strong> — Control de repuestos y stock</li>
+    <li><strong>Facturación</strong> — Facturas, boletas y pagos</li>
+    <li><strong>Agenda & Citas</strong> — Programación de citas</li>
+    <li><strong>Reportes</strong> — Análisis y exportación</li>
+    <li><strong>Configuración</strong> — Catálogos y temas</li>
+    <li><strong>Notificaciones</strong> — Alertas automáticas</li>
+    <li><strong>Portal del Cliente</strong> — Acceso para clientes</li>
+    <li><strong>Roles y Permisos</strong> — Niveles de acceso</li>
+  </ol>
+</div>
+
+<div class="page-break"></div>
+
+<!-- 1. INTRODUCCIÓN -->
+<h2>1. Introducción</h2>
+
+<p><strong>AutoTaller Pro</strong> es un sistema web completo para gestionar todas las operaciones de un taller automotriz: desde la recepción del vehículo hasta la entrega al cliente, incluyendo inventario, facturación y reportes gerenciales.</p>
+
+<h4>Flujo general del sistema</h4>
+<div class="flow">
+  <span class="flow-item">Recepción</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-item">Orden de Trabajo</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-item">Servicios + Repuestos</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-item">Facturación</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-item">Pago</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-item">Entrega</span>
+</div>
+
+<h4>Características principales</h4>
+<ul>
+  <li>Gestión de clientes (personas y empresas) con sus vehículos</li>
+  <li>Órdenes de trabajo con seguimiento de estados</li>
+  <li>Catálogo de 32 servicios y 26 repuestos precargados</li>
+  <li>Facturación automática con IGV 18% (Boleta/Factura)</li>
+  <li>Agenda de citas con verificación de disponibilidad</li>
+  <li>Notificaciones automáticas en tiempo real</li>
+  <li>Reportes con exportación PDF y Excel</li>
+  <li>Portal web para que los clientes consulten sus vehículos</li>
+  <li>Modo oscuro y 4 temas de color</li>
+  <li>7 roles con permisos diferenciados</li>
+</ul>
+
+<div class="page-break"></div>
+
+<!-- 2. ACCESO AL SISTEMA -->
+<h2>2. Acceso al Sistema</h2>
+
+<div class="module-header">
+  <h3>Login de Empleados</h3>
+  <p>Acceso al sistema interno del taller</p>
+</div>
+
+<div class="url-box">/login</div>
+
+<div class="step">
+  <div class="step-num">1</div>
+  <div class="step-content">
+    <p><strong>Seleccionar tipo de documento:</strong> DNI, Pasaporte o Carnet de Extranjería</p>
+  </div>
+</div>
+<div class="step">
+  <div class="step-num">2</div>
+  <div class="step-content">
+    <p><strong>Ingresar número de documento</strong> y <strong>contraseña</strong></p>
+  </div>
+</div>
+<div class="step">
+  <div class="step-num">3</div>
+  <div class="step-content">
+    <p>Si es el primer ingreso, el sistema pedirá <strong>cambiar la contraseña</strong> por seguridad</p>
+  </div>
+</div>
+
+<div class="info-box warning">
+  <p>⚠️ <strong>Primer inicio:</strong> Todo usuario nuevo debe cambiar su contraseña antes de acceder al sistema. La contraseña mínima es de 4 caracteres.</p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- 3. DASHBOARD -->
+<h2>3. Dashboard</h2>
+
+<div class="module-header">
+  <h3>Panel Principal</h3>
+  <p>Vista general de la operación del taller en tiempo real</p>
+</div>
+
+<div class="url-box">/</div>
+
+<p>El dashboard muestra indicadores clave actualizados automáticamente cada 30 segundos:</p>
+
+<table>
+  <tr><th>Indicador</th><th>Descripción</th></tr>
+  <tr><td><strong>Vehículos en taller</strong></td><td>Cantidad de vehículos con OT abierta (no entregados)</td></tr>
+  <tr><td><strong>Ingresos del mes</strong></td><td>Total de pagos recibidos en el mes actual con variación vs mes anterior</td></tr>
+  <tr><td><strong>Clientes registrados</strong></td><td>Total de clientes activos y vehículos</td></tr>
+  <tr><td><strong>Stock bajo</strong></td><td>Repuestos que están por debajo del stock mínimo</td></tr>
+</table>
+
+<h4>Secciones adicionales</h4>
+<ul>
+  <li><strong>Citas de Hoy:</strong> Hasta 5 citas programadas para el día, con hora, servicio, cliente y estado</li>
+  <li><strong>Órdenes Recientes:</strong> Últimas 5 OTs con estado, vehículo y costo</li>
+  <li><strong>Estado de Órdenes:</strong> Conteo por estado (Recibido, En Proceso, Entregado, Cancelado)</li>
+  <li><strong>Servicios Top:</strong> Los 5 servicios más solicitados</li>
+</ul>
+
+<div class="page-break"></div>
+
+<!-- 4. VEHÍCULOS & CLIENTES -->
+<h2>4. Vehículos & Clientes</h2>
+
+<div class="module-header">
+  <h3>Registro de Clientes y Vehículos</h3>
+  <p>Gestión completa de la base de clientes del taller</p>
+</div>
+
+<div class="url-box">/vehiculos</div>
+
+<h3>Tipos de cliente</h3>
+<table>
+  <tr><th>Tipo</th><th>Documento</th><th>Datos requeridos</th></tr>
+  <tr><td><strong>Persona Natural</strong></td><td>DNI (8 dígitos)</td><td>Nombres, apellidos, teléfono, dirección</td></tr>
+  <tr><td><strong>Empresa</strong></td><td>RUC (11 dígitos)</td><td>Razón social, datos de contacto (nombre, cargo, teléfono)</td></tr>
+</table>
+
+<h3>Registrar un cliente</h3>
+<div class="step">
+  <div class="step-num">1</div>
+  <div class="step-content"><p>Clic en <strong>"Nuevo Cliente"</strong></p></div>
+</div>
+<div class="step">
+  <div class="step-num">2</div>
+  <div class="step-content"><p>Seleccionar tipo (Persona/Empresa) y completar los datos</p></div>
+</div>
+<div class="step">
+  <div class="step-num">3</div>
+  <div class="step-content"><p>Teléfono: formato peruano (9 dígitos, empieza con 9)</p></div>
+</div>
+
+<h3>Registrar un vehículo</h3>
+<div class="step">
+  <div class="step-num">1</div>
+  <div class="step-content"><p>Clic en el cliente → <strong>"Vehículo"</strong> en acciones</p></div>
+</div>
+<div class="step">
+  <div class="step-num">2</div>
+  <div class="step-content"><p>Completar: marca, modelo, año, placa (formato Perú: ABC-123), color, combustible</p></div>
+</div>
+
+<h3>Ver detalle del cliente</h3>
+<p>Clic en cualquier fila de la tabla para abrir el <strong>modal de detalle</strong> con toda la información del cliente y sus vehículos en tarjetas visuales.</p>
+
+<h3>Filtros disponibles</h3>
+<ul>
+  <li><strong>Todos / Personas / Empresas</strong> — filtrar por tipo de cliente</li>
+  <li><strong>Búsqueda</strong> — por nombre, DNI, teléfono o placa de vehículo</li>
+</ul>
+
+<div class="page-break"></div>
+
+<!-- 5. ÓRDENES DE TRABAJO -->
+<h2>5. Órdenes de Trabajo</h2>
+
+<div class="module-header">
+  <h3>Gestión de Servicios y Mantenimiento</h3>
+  <p>Flujo completo desde la recepción hasta la entrega del vehículo</p>
+</div>
+
+<div class="url-box">/ordenes-trabajo</div>
+
+<h3>Estados de una OT</h3>
+<div class="flow">
+  <span class="flow-item" style="background:#64748b">Recibido</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-item" style="background:#f97316">En Proceso</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-item" style="background:#10b981">Entregado</span>
+</div>
+<p style="font-size:12px; color:#94a3b8;">En cualquier momento se puede <strong>Cancelar</strong> una OT (excepto si ya fue entregada).</p>
+
+<h3>Crear una Orden de Trabajo</h3>
+
+<h4>Paso 1: Cliente y Vehículo</h4>
+<div class="step">
+  <div class="step-num">1</div>
+  <div class="step-content"><p>Clic en <strong>"Nueva Orden"</strong></p></div>
+</div>
+<div class="step">
+  <div class="step-num">2</div>
+  <div class="step-content"><p>Buscar cliente por nombre, DNI, teléfono o placa</p></div>
+</div>
+<div class="step">
+  <div class="step-num">3</div>
+  <div class="step-content"><p>Seleccionar el vehículo del cliente (o registrar uno nuevo)</p></div>
+</div>
+
+<h4>Paso 2: Datos y Checklist</h4>
+<div class="step">
+  <div class="step-num">4</div>
+  <div class="step-content"><p>Ingresar kilometraje de entrada, fecha estimada, notas</p></div>
+</div>
+<div class="step">
+  <div class="step-num">5</div>
+  <div class="step-content"><p>Completar checklist de recepción (combustible, herramientas, rayones, etc.)</p></div>
+</div>
+<div class="step">
+  <div class="step-num">6</div>
+  <div class="step-content"><p>Crear la orden → se genera número automático (OT-2026-0001)</p></div>
+</div>
+
+<h3>Detalle de la OT</h3>
+<p>Dentro del detalle de cada OT puedes:</p>
+<ul>
+  <li><strong>Agregar servicios</strong> del catálogo con precio</li>
+  <li><strong>Agregar repuestos</strong> del inventario con costo</li>
+  <li><strong>Cambiar estado</strong> con registro en historial</li>
+  <li>Ver el <strong>costo total</strong> actualizado automáticamente</li>
+</ul>
+
+<div class="info-box success">
+  <p>✅ Cuando una OT pasa a <strong>Entregado</strong>, queda como solo lectura — no se pueden agregar más servicios ni repuestos.</p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- 6. SERVICIOS -->
+<h2>6. Servicios & Catálogo</h2>
+
+<div class="module-header">
+  <h3>Catálogo de Servicios del Taller</h3>
+  <p>Servicios preventivos y correctivos con precios base</p>
+</div>
+
+<div class="url-box">/servicios</div>
+
+<table>
+  <tr><th>Tipo</th><th>Descripción</th><th>Ejemplos</th></tr>
+  <tr><td><strong>Preventivo</strong></td><td>Mantenimiento programado</td><td>Cambio de aceite, filtros, alineamiento</td></tr>
+  <tr><td><strong>Correctivo</strong></td><td>Reparaciones por falla</td><td>Cambio de pastillas, reparación motor</td></tr>
+</table>
+
+<p>El sistema viene precargado con <strong>32 servicios</strong> con precios base en soles (S/). Cada servicio tiene categoría y especialidad asignada.</p>
+
+<div class="page-break"></div>
+
+<!-- 7. INVENTARIO -->
+<h2>7. Inventario de Repuestos</h2>
+
+<div class="module-header">
+  <h3>Control de Stock y Movimientos</h3>
+  <p>Gestión de repuestos con alertas de stock bajo</p>
+</div>
+
+<div class="url-box">/inventario</div>
+
+<h3>Tipos de movimiento</h3>
+<table>
+  <tr><th>Tipo</th><th>Descripción</th><th>Efecto en stock</th></tr>
+  <tr><td><strong>Entrada</strong></td><td>Compra o devolución</td><td>+cantidad</td></tr>
+  <tr><td><strong>Salida</strong></td><td>Uso en OT</td><td>-cantidad</td></tr>
+  <tr><td><strong>Ajuste</strong></td><td>Corrección de inventario</td><td>= cantidad</td></tr>
+</table>
+
+<div class="info-box warning">
+  <p>⚠️ <strong>Alerta de stock bajo:</strong> Cuando un repuesto queda por debajo del stock mínimo, se genera una notificación automática al personal de almacén.</p>
+</div>
+
+<p>El sistema viene precargado con <strong>26 repuestos</strong> con precios de venta y stock mínimo configurado.</p>
+
+<div class="page-break"></div>
+
+<!-- 8. FACTURACIÓN -->
+<h2>8. Facturación</h2>
+
+<div class="module-header">
+  <h3>Facturas, Boletas y Pagos</h3>
+  <p>Generación automática desde órdenes de trabajo</p>
+</div>
+
+<div class="url-box">/facturacion</div>
+
+<h3>Generar una factura</h3>
+<div class="step">
+  <div class="step-num">1</div>
+  <div class="step-content"><p>Desde el detalle de una OT en estado <strong>Entregado</strong>, clic en "Generar Factura"</p></div>
+</div>
+<div class="step">
+  <div class="step-num">2</div>
+  <div class="step-content"><p>El sistema genera automáticamente: <strong>Boleta</strong> (persona natural) o <strong>Factura</strong> (empresa)</p></div>
+</div>
+<div class="step">
+  <div class="step-num">3</div>
+  <div class="step-content"><p>Se calcula automáticamente: subtotal + <strong>IGV 18%</strong> = total</p></div>
+</div>
+
+<h3>Registrar pagos</h3>
+<p>Se pueden registrar <strong>pagos parciales</strong> o el total:</p>
+<table>
+  <tr><th>Estado</th><th>Significado</th></tr>
+  <tr><td><strong>Emitida</strong></td><td>Factura generada, sin pagos</td></tr>
+  <tr><td><strong>Parcial</strong></td><td>Se registró un pago pero falta completar</td></tr>
+  <tr><td><strong>Pagada</strong></td><td>El total fue cubierto completamente</td></tr>
+  <tr><td><strong>Anulada</strong></td><td>Factura anulada (solo si no está pagada)</td></tr>
+</table>
+
+<h4>Métodos de pago disponibles</h4>
+<p>Efectivo, Tarjeta Débito, Tarjeta Crédito, Transferencia, Yape, Plin</p>
+
+<div class="page-break"></div>
+
+<!-- 9. AGENDA -->
+<h2>9. Agenda & Citas</h2>
+
+<div class="module-header">
+  <h3>Programación de Citas</h3>
+  <p>Agendar y gestionar citas del taller con verificación de disponibilidad</p>
+</div>
+
+<div class="url-box">/agenda</div>
+
+<h3>Crear una cita</h3>
+<div class="step">
+  <div class="step-num">1</div>
+  <div class="step-content"><p>Clic en <strong>"Nueva Cita"</strong></p></div>
+</div>
+<div class="step">
+  <div class="step-num">2</div>
+  <div class="step-content"><p>Seleccionar <strong>cliente</strong> y <strong>vehículo</strong></p></div>
+</div>
+<div class="step">
+  <div class="step-num">3</div>
+  <div class="step-content"><p>Seleccionar <strong>servicio</strong> (opcional, con precio)</p></div>
+</div>
+<div class="step">
+  <div class="step-num">4</div>
+  <div class="step-content"><p>Elegir <strong>fecha y hora</strong> con el calendario visual (slots de 30 min, 7am-7pm)</p></div>
+</div>
+<div class="step">
+  <div class="step-num">5</div>
+  <div class="step-content"><p>Asignar <strong>mecánico</strong> (opcional) y agregar notas</p></div>
+</div>
+
+<h3>Estados de una cita</h3>
+<div class="flow">
+  <span class="flow-item" style="background:#3b82f6">Programada</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-item" style="background:#6366f1">Confirmada</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-item" style="background:#f59e0b">En Proceso</span>
+  <span class="flow-arrow">→</span>
+  <span class="flow-item" style="background:#10b981">Completada</span>
+</div>
+
+<div class="info-box orange">
+  <p>🔧 El sistema verifica que el mecánico no tenga otra cita en el mismo horario. Si hay conflicto, muestra una alerta antes de guardar.</p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- 10. REPORTES -->
+<h2>10. Reportes</h2>
+
+<div class="module-header">
+  <h3>Análisis de Ingresos</h3>
+  <p>Reportes con filtros y exportación a PDF y Excel</p>
+</div>
+
+<div class="url-box">/reportes</div>
+
+<h3>Contenido del reporte</h3>
+<ul>
+  <li><strong>KPIs:</strong> Total ingresos, cantidad de pagos, promedio por pago</li>
+  <li><strong>Por método de pago:</strong> Desglose con barras de porcentaje</li>
+  <li><strong>Por día:</strong> Distribución de ingresos diarios</li>
+  <li><strong>Detalle:</strong> Tabla con cada pago (factura, cliente, método, monto, fecha)</li>
+</ul>
+
+<h3>Filtros de período</h3>
+<table>
+  <tr><th>Filtro</th><th>Rango</th></tr>
+  <tr><td>Esta semana</td><td>Últimos 7 días</td></tr>
+  <tr><td>Este mes</td><td>Desde el 1° del mes actual</td></tr>
+  <tr><td>Este año</td><td>Desde el 1° de enero</td></tr>
+</table>
+
+<h3>Exportación</h3>
+<table>
+  <tr><th>Formato</th><th>Contenido</th></tr>
+  <tr><td><strong>PDF</strong></td><td>Header con logo, KPIs, tabla por método, detalle de pagos</td></tr>
+  <tr><td><strong>Excel</strong></td><td>3 hojas: Resumen, Detalle Pagos, Por Día. Formato moneda S/</td></tr>
+</table>
+
+<div class="page-break"></div>
+
+<!-- 11. CONFIGURACIÓN -->
+<h2>11. Configuración</h2>
+
+<div class="module-header">
+  <h3>Catálogos y Parámetros del Sistema</h3>
+  <p>Administración de datos maestros y apariencia</p>
+</div>
+
+<div class="url-box">/configuracion</div>
+
+<h3>Catálogos vehiculares</h3>
+<p>Marcas, modelos, tipos de vehículo, colores, combustibles, transmisiones</p>
+
+<h3>Catálogos operativos</h3>
+<p>Categorías de servicio, especialidades, métodos de pago, tipos de documento fiscal, unidades, motivos de descuento, categorías de repuesto</p>
+
+<h3>Apariencia</h3>
+<table>
+  <tr><th>Tema</th><th>Color</th></tr>
+  <tr><td>Naranja Automotriz</td><td style="color:#f97316">■ #f97316 (por defecto)</td></tr>
+  <tr><td>Azul Profesional</td><td style="color:#3b82f6">■ Clásico SaaS</td></tr>
+  <tr><td>Azul Navy</td><td style="color:#1e3a5f">■ Corporativo</td></tr>
+  <tr><td>Verde Esmeralda</td><td style="color:#10b981">■ Moderno</td></tr>
+</table>
+
+<p><strong>Modo oscuro:</strong> Toggle en la configuración del sistema o con el icono luna/sol en la barra superior.</p>
+
+<div class="page-break"></div>
+
+<!-- 12. NOTIFICACIONES -->
+<h2>12. Notificaciones</h2>
+
+<div class="module-header">
+  <h3>Alertas Automáticas del Sistema</h3>
+  <p>Notificaciones en tiempo real para cada rol</p>
+</div>
+
+<p>El icono de campana 🔔 en la barra superior muestra las notificaciones. Se actualiza automáticamente cada 30 segundos.</p>
+
+<h3>Notificaciones automáticas</h3>
+<table>
+  <tr><th>Evento</th><th>Destinatario</th></tr>
+  <tr><td>Cita creada con mecánico asignado</td><td>Mecánico asignado</td></tr>
+  <tr><td>Cita confirmada</td><td>Mecánico + Recepcionistas</td></tr>
+  <tr><td>OT cambia de estado</td><td>Recepcionista que creó la OT</td></tr>
+  <tr><td>Factura pagada completamente</td><td>Personal de Contabilidad</td></tr>
+  <tr><td>Repuesto con stock bajo</td><td>Personal de Almacén</td></tr>
+</table>
+
+<h3>Acciones en las notificaciones</h3>
+<ul>
+  <li>Clic en una notificación → se marca como leída y navega a la sección correspondiente</li>
+  <li>"Marcar todas" → limpia todas las notificaciones pendientes</li>
+</ul>
+
+<div class="page-break"></div>
+
+<!-- 13. PORTAL CLIENTE -->
+<h2>13. Portal del Cliente</h2>
+
+<div class="module-header">
+  <h3>Acceso Web para Clientes del Taller</h3>
+  <p>Los clientes pueden consultar el estado de sus vehículos sin llamar al taller</p>
+</div>
+
+<div class="url-box">/portal/login</div>
+
+<h3>Acceso</h3>
+<p>El cliente ingresa con su <strong>número de documento</strong> (DNI o RUC) y su <strong>teléfono</strong> registrado en el taller. No necesita contraseña.</p>
+
+<h3>Funcionalidades del portal</h3>
+
+<table>
+  <tr><th>Sección</th><th>Qué puede ver/hacer</th></tr>
+  <tr><td><strong>Inicio</strong></td><td>KPIs: vehículos, OTs abiertas, facturas pendientes, citas próximas</td></tr>
+  <tr><td><strong>Mis Vehículos</strong></td><td>Tarjetas con placa, marca/modelo, km. Si tiene OT abierta muestra el estado</td></tr>
+  <tr><td><strong>Mis Órdenes</strong></td><td>Historial de todas las OTs con desglose de servicios y repuestos</td></tr>
+  <tr><td><strong>Mis Facturas</strong></td><td>Facturas con montos, pagos realizados y saldo pendiente</td></tr>
+  <tr><td><strong>Mis Citas</strong></td><td>Lista de citas + botón para agendar nueva cita online</td></tr>
+</table>
+
+<h3>Agendar cita desde el portal</h3>
+<p>El cliente puede agendar una cita seleccionando:</p>
+<ul>
+  <li>Vehículo (de los registrados a su nombre)</li>
+  <li>Servicio (opcional)</li>
+  <li>Fecha y hora (calendario visual)</li>
+</ul>
+
+<div class="info-box success">
+  <p>✅ La cita queda en estado <strong>Programada</strong> hasta que el taller la confirme desde el sistema interno.</p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- 14. ROLES -->
+<h2>14. Roles y Permisos</h2>
+
+<div class="module-header">
+  <h3>Control de Acceso por Rol</h3>
+  <p>7 roles con permisos diferenciados por módulo</p>
+</div>
+
+<table>
+  <tr>
+    <th>Rol</th>
+    <th>Acceso</th>
+  </tr>
+  <tr><td><strong>Administrador</strong></td><td>Acceso total a todos los módulos</td></tr>
+  <tr><td><strong>Gerente</strong></td><td>Operaciones, reportes, facturación (sin usuarios ni config)</td></tr>
+  <tr><td><strong>Supervisor</strong></td><td>Control de calidad, OTs, agenda (lectura en servicios e inventario)</td></tr>
+  <tr><td><strong>Mecánico</strong></td><td>OTs asignadas, dashboard (lectura en vehículos y servicios)</td></tr>
+  <tr><td><strong>Recepcionista</strong></td><td>Clientes, OTs, agenda, facturación</td></tr>
+  <tr><td><strong>Almacén</strong></td><td>Inventario completo, OTs lectura, reportes lectura</td></tr>
+  <tr><td><strong>Contabilidad</strong></td><td>Facturación y reportes completos</td></tr>
+</table>
+
+<div class="info-box">
+  <p>💡 <strong>Tip:</strong> Los permisos se configuran por módulo con 4 niveles: Crear, Leer, Editar, Eliminar. El administrador puede ver la matriz completa en el seed del sistema.</p>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p><strong>AutoTaller Pro</strong> — Sistema de Gestión Integral para Talleres Automotrices</p>
+  <p>Versión 1.0 — Marzo 2026</p>
+  <p>Desarrollado con React 19 + Fastify + PostgreSQL</p>
+</div>
+
+</div>
+</body>
+</html>

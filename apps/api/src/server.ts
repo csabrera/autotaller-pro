@@ -67,7 +67,7 @@ if (process.env.NODE_ENV === 'production') {
 // Start
 const start = async () => {
   try {
-    const port = Number(process.env.API_PORT) || 3005;
+    const port = Number(process.env.PORT) || Number(process.env.API_PORT) || 3005;
     await app.listen({ port, host: '0.0.0.0' });
     console.log(`🔧 AutoTaller API corriendo en http://localhost:${port}`);
   } catch (err) {

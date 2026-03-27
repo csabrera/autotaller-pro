@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoTaller Pro - Guion de Demostración</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    color: #1e293b;
+    line-height: 1.7;
+    font-size: 14px;
+    background: #fff;
+  }
+
+  @media print {
+    body { font-size: 11px; }
+    .page-break { page-break-before: always; }
+    .cover { height: 100vh; }
+  }
+
+  .cover {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #0f172a 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center;
+    padding: 40px;
+  }
+  .cover h1 { font-size: 44px; font-weight: 900; margin-bottom: 8px; }
+  .cover .subtitle { font-size: 22px; font-weight: 300; opacity: 0.9; margin-bottom: 12px; }
+  .cover .desc { font-size: 14px; opacity: 0.7; max-width: 500px; margin-bottom: 40px; }
+  .cover .badge { background: white; color: #f97316; padding: 10px 28px; border-radius: 50px; font-weight: 800; font-size: 14px; }
+  .cover .logo { font-size: 80px; margin-bottom: 20px; }
+
+  .content { max-width: 800px; margin: 0 auto; padding: 40px 30px; }
+
+  h2 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 40px 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  h2 .scene-num {
+    background: #f97316;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  h2 .time {
+    font-size: 12px;
+    font-weight: 500;
+    color: #94a3b8;
+    margin-left: auto;
+    background: #f1f5f9;
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #f97316;
+    margin: 20px 0 8px;
+  }
+
+  p { margin-bottom: 10px; color: #475569; }
+
+  .scene-box {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 16px 0 30px;
+    background: #fafafa;
+  }
+
+  .say {
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 12px 0;
+    font-style: italic;
+  }
+  .say::before {
+    content: '🎤 ';
+    font-style: normal;
+  }
+  .say p { margin: 0; color: #1e40af; }
+
+  .do {
+    background: #f0fdf4;
+    border-left: 4px solid #10b981;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 12px 0;
+  }
+  .do::before {
+    content: '👆 HACER: ';
+    font-weight: 700;
+    color: #059669;
+    font-size: 11px;
+  }
+  .do p { margin: 0; color: #065f46; }
+
+  .highlight {
+    background: #fff7ed;
+    border-left: 4px solid #f97316;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 12px 0;
+  }
+  .highlight::before {
+    content: '✨ DESTACAR: ';
+    font-weight: 700;
+    color: #ea580c;
+    font-size: 11px;
+  }
+  .highlight p { margin: 0; color: #9a3412; }
+
+  .url {
+    background: #1e293b;
+    color: #f97316;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 13px;
+    display: inline-block;
+    margin: 4px 0;
+  }
+
+  .data-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 8px 0;
+    font-family: monospace;
+    font-size: 12px;
+    color: #475569;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 13px;
+  }
+  th {
+    background: #0f172a;
+    color: white;
+    padding: 8px 14px;
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+  }
+  td {
+    padding: 8px 14px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #475569;
+  }
+
+  .timeline {
+    background: linear-gradient(135deg, #0f172a, #334155);
+    color: white;
+    padding: 24px;
+    border-radius: 12px;
+    margin: 20px 0;
+  }
+  .timeline h3 { color: #f97316; margin-top: 0; }
+  .timeline table th { background: #475569; }
+  .timeline table td { border-color: #475569; color: #cbd5e1; }
+
+  .tip {
+    background: #fefce8;
+    border: 1px solid #fef08a;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 12px;
+  }
+  .tip::before { content: '💡 '; }
+  .tip p { margin: 0; color: #854d0e; }
+
+  .footer {
+    text-align: center;
+    padding: 40px;
+    color: #94a3b8;
+    font-size: 11px;
+    border-top: 1px solid #e2e8f0;
+    margin-top: 60px;
+  }
+
+  .checklist { list-style: none; padding: 0; }
+  .checklist li { padding: 4px 0; color: #475569; }
+  .checklist li::before { content: '☐ '; color: #f97316; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<!-- PORTADA -->
+<div class="cover">
+  <div class="logo">🔧</div>
+  <h1>AutoTaller Pro</h1>
+  <p class="subtitle">Guion de Demostración</p>
+  <p class="desc">Script paso a paso para presentar el sistema en vivo. Incluye qué decir, qué hacer y qué destacar en cada pantalla.</p>
+  <span class="badge">Demo en Vivo — 25 minutos</span>
+</div>
+
+<div class="content">
+
+<div class="page-break"></div>
+
+<!-- PREPARACIÓN -->
+<h2>
+  <span class="scene-num">0</span>
+  Antes de la Demo
+  <span class="time">5 min antes</span>
+</h2>
+
+<div class="scene-box">
+  <h3>Checklist de preparación</h3>
+  <ul class="checklist">
+    <li>Sistema abierto en Chrome (pantalla completa F11)</li>
+    <li>Tener el login listo en /login</li>
+    <li>Segunda pestaña con /portal/login (para la demo del portal)</li>
+    <li>Modo claro activado (para mejor visibilidad en proyector)</li>
+    <li>Tema naranja seleccionado</li>
+    <li>Verificar que hay datos de ejemplo (clientes, OTs, facturas)</li>
+  </ul>
+
+  <h3>Datos para la demo</h3>
+  <div class="data-box">
+    Admin: DNI 00000000 / clave: 12345678<br>
+    Portal cliente: DNI 87654321 / tel: 998877665 (Juan Perez)
+  </div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ESCENA 1 -->
+<h2>
+  <span class="scene-num">1</span>
+  Bienvenida e Ingreso
+  <span class="time">2 min</span>
+</h2>
+
+<div class="scene-box">
+  <div class="say"><p>AutoTaller Pro es un sistema web completo para gestionar todas las operaciones de un taller automotriz. Vamos a recorrer el flujo real: desde que un cliente llega con su vehículo hasta que se le entrega con la factura pagada.</p></div>
+
+  <div class="do"><p>Ingresar DNI <strong>00000000</strong> y contraseña. Clic en "Ingresar".</p></div>
+
+  <div class="highlight"><p>El sistema tiene 3 tipos de documento (DNI, Pasaporte, Carnet de Extranjería) y en el primer inicio obliga a cambiar contraseña por seguridad.</p></div>
+</div>
+
+<!-- ESCENA 2 -->
+<h2>
+  <span class="scene-num">2</span>
+  Dashboard — Vista General
+  <span class="time">2 min</span>
+</h2>
+
+<div class="scene-box">
+  <div class="say"><p>Este es el panel principal. Aquí el gerente o administrador ve de un vistazo cómo va el taller hoy: cuántos vehículos están en proceso, los ingresos del mes, el stock de repuestos y las citas del día.</p></div>
+
+  <div class="do"><p>Señalar cada KPI card y explicar. Mostrar el widget "Citas de Hoy". Clic en "Ver agenda completa" para mostrar que es navegable.</p></div>
+
+  <div class="highlight"><p>Los datos se actualizan automáticamente cada 30 segundos. No necesita recargar la página.</p></div>
+
+  <div class="do"><p>Volver al Dashboard con el botón atrás del navegador.</p></div>
+</div>
+
+<!-- ESCENA 3 -->
+<h2>
+  <span class="scene-num">3</span>
+  Registro de Cliente y Vehículo
+  <span class="time">3 min</span>
+</h2>
+
+<div class="scene-box">
+  <div class="say"><p>Cuando un cliente nuevo llega al taller, lo primero que hacemos es registrarlo. Veamos cómo funciona.</p></div>
+
+  <div class="do"><p>Ir a <span class="url">/vehiculos</span>. Mostrar la tabla con filtros (Todos, Personas, Empresas). Usar la búsqueda.</p></div>
+
+  <div class="say"><p>Registremos un cliente nuevo. El sistema está preparado para el mercado peruano: valida DNI de 8 dígitos, teléfonos que empiecen con 9 y apellidos en mayúsculas.</p></div>
+
+  <div class="do"><p>Clic "Nuevo Cliente". Llenar datos de ejemplo. Mostrar las validaciones en tiempo real.</p></div>
+
+  <div class="do"><p>Clic en el cliente creado → mostrar el modal de detalle. Clic "Agregar vehículo". Llenar placa formato Perú (ABC-123), marca Toyota, modelo Corolla.</p></div>
+
+  <div class="highlight"><p>El modal de detalle muestra toda la información del cliente con sus vehículos en tarjetas. No necesita navegar a otra página.</p></div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ESCENA 4 -->
+<h2>
+  <span class="scene-num">4</span>
+  Crear Orden de Trabajo
+  <span class="time">4 min</span>
+</h2>
+
+<div class="scene-box">
+  <div class="say"><p>Ahora que tenemos al cliente y su vehículo, creamos la orden de trabajo. Este es el corazón del sistema — aquí se registra todo el servicio que se le hace al vehículo.</p></div>
+
+  <div class="do"><p>Ir a <span class="url">/ordenes-trabajo</span>. Clic "Nueva Orden".</p></div>
+
+  <h3>Paso 1: Cliente y Vehículo</h3>
+  <div class="do"><p>Buscar el cliente por nombre o DNI. Seleccionarlo. Seleccionar el vehículo.</p></div>
+
+  <div class="highlight"><p>Si el cliente no existe, se puede registrar directamente desde aquí sin salir del formulario.</p></div>
+
+  <h3>Paso 2: Datos y Checklist</h3>
+  <div class="do"><p>Ingresar kilometraje: 25000. Marcar items del checklist (combustible, herramientas, rayones). Agregar una observación en un item.</p></div>
+
+  <div class="say"><p>El checklist sirve para documentar el estado del vehículo al recibirlo. Esto protege al taller de reclamos posteriores.</p></div>
+
+  <div class="do"><p>Clic "Crear Orden". Mostrar que se generó el número OT-2026-XXXX automáticamente.</p></div>
+
+  <h3>Agregar Servicios y Repuestos</h3>
+  <div class="do"><p>En el detalle de la OT, agregar un servicio: "Cambio de aceite" S/ 80. Agregar un repuesto: "Filtro de aceite" S/ 25. Mostrar que el costo total se actualiza solo.</p></div>
+
+  <h3>Cambiar Estados</h3>
+  <div class="do"><p>Cambiar estado a "En Proceso" → mostrar el toast de confirmación.</p></div>
+
+  <div class="say"><p>Cada cambio de estado queda registrado en el historial y genera una notificación automática al recepcionista.</p></div>
+
+  <div class="do"><p>Cambiar a "Entregado". Mostrar que la OT queda como solo lectura.</p></div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ESCENA 5 -->
+<h2>
+  <span class="scene-num">5</span>
+  Facturación y Pagos
+  <span class="time">3 min</span>
+</h2>
+
+<div class="scene-box">
+  <div class="say"><p>Con la orden entregada, generamos la factura automáticamente. El sistema calcula el IGV del 18% y distingue entre Boleta para personas y Factura para empresas.</p></div>
+
+  <div class="do"><p>Ir a <span class="url">/facturacion</span>. Generar factura desde la OT entregada.</p></div>
+
+  <div class="highlight"><p>La factura se genera con un solo clic. El subtotal, IGV y total se calculan automáticamente.</p></div>
+
+  <div class="say"><p>Ahora registramos el pago. El sistema permite pagos parciales — por ejemplo, si el cliente paga una parte con efectivo y otra con Yape.</p></div>
+
+  <div class="do"><p>Registrar pago parcial con Efectivo. Mostrar que el estado cambia a "Parcial" y muestra el pendiente en rojo. Registrar segundo pago con Yape por el resto. Estado cambia a "Pagada".</p></div>
+
+  <div class="highlight"><p>Al quedar pagada, se genera automáticamente una notificación al equipo de contabilidad.</p></div>
+</div>
+
+<!-- ESCENA 6 -->
+<h2>
+  <span class="scene-num">6</span>
+  Inventario
+  <span class="time">2 min</span>
+</h2>
+
+<div class="scene-box">
+  <div class="say"><p>El módulo de inventario controla el stock de repuestos con alertas automáticas cuando un producto está por debajo del mínimo.</p></div>
+
+  <div class="do"><p>Ir a <span class="url">/inventario</span>. Mostrar la tabla con 26 repuestos precargados. Clic en filtro "Stock Bajo" para ver los críticos.</p></div>
+
+  <div class="do"><p>Registrar un movimiento de entrada (compra) en un repuesto. Mostrar que el stock sube.</p></div>
+
+  <div class="highlight"><p>Si se registra una salida y el stock queda bajo el mínimo, el sistema notifica automáticamente al personal de almacén.</p></div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ESCENA 7 -->
+<h2>
+  <span class="scene-num">7</span>
+  Agenda y Citas
+  <span class="time">3 min</span>
+</h2>
+
+<div class="scene-box">
+  <div class="say"><p>La agenda permite programar citas para los clientes. Veamos cómo crear una.</p></div>
+
+  <div class="do"><p>Ir a <span class="url">/agenda</span>. Clic "Nueva Cita".</p></div>
+
+  <div class="do"><p>Seleccionar cliente, vehículo, servicio. Clic en "Fecha y hora" → mostrar el calendario visual con los slots de mañana y tarde.</p></div>
+
+  <div class="highlight"><p>El selector de fecha es un calendario interactivo con horarios en botones. Los horarios ya pasados se deshabilitan automáticamente. Si se asigna un mecánico, el sistema verifica que no tenga otra cita en el mismo horario.</p></div>
+
+  <div class="do"><p>Seleccionar fecha, hora y mecánico. Agendar la cita. Mostrar la tabla con filtros por estado y el toast de confirmación.</p></div>
+
+  <div class="do"><p>Clic en la cita → modal de detalle. Cambiar estado a "Confirmada".</p></div>
+
+  <div class="say"><p>Al confirmar, se notifica automáticamente al mecánico asignado y a los recepcionistas.</p></div>
+</div>
+
+<!-- ESCENA 8 -->
+<h2>
+  <span class="scene-num">8</span>
+  Reportes y Exportación
+  <span class="time">2 min</span>
+</h2>
+
+<div class="scene-box">
+  <div class="say"><p>Los reportes muestran el análisis de ingresos del taller con filtros por período.</p></div>
+
+  <div class="do"><p>Ir a <span class="url">/reportes</span>. Mostrar los KPIs de ingresos. Alternar entre "Esta semana", "Este mes", "Este año".</p></div>
+
+  <div class="do"><p>Señalar la gráfica de métodos de pago con porcentajes. Señalar la distribución por día.</p></div>
+
+  <div class="say"><p>Y lo más importante para gerencia: se puede exportar a PDF y Excel.</p></div>
+
+  <div class="do"><p>Clic en botón "PDF" → se descarga. Abrir el PDF y mostrar el contenido formateado. Clic en "Excel" → se descarga con 3 hojas.</p></div>
+
+  <div class="highlight"><p>El PDF tiene el logo del taller, KPIs y tablas formateadas. El Excel tiene formato moneda S/ y separación por hojas.</p></div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ESCENA 9 -->
+<h2>
+  <span class="scene-num">9</span>
+  Notificaciones
+  <span class="time">1 min</span>
+</h2>
+
+<div class="scene-box">
+  <div class="say"><p>Todas las acciones importantes generan notificaciones automáticas al personal indicado.</p></div>
+
+  <div class="do"><p>Clic en la campana 🔔 del TopBar. Mostrar el panel con las notificaciones. Clic en una → se marca como leída y navega.</p></div>
+
+  <div class="highlight"><p>Las notificaciones se actualizan cada 30 segundos sin recargar. Cada tipo tiene su icono: calendario para citas, llave para OTs, caja para stock, dólar para facturas.</p></div>
+</div>
+
+<!-- ESCENA 10 -->
+<h2>
+  <span class="scene-num">10</span>
+  Configuración y Temas
+  <span class="time">1 min</span>
+</h2>
+
+<div class="scene-box">
+  <div class="say"><p>El sistema es completamente personalizable. Se pueden administrar todos los catálogos: marcas, modelos, colores, métodos de pago, y más.</p></div>
+
+  <div class="do"><p>Ir a <span class="url">/configuracion</span>. Mostrar los tabs (Vehiculares, Operativos, Sistema). Clic en algunas pills de catálogos.</p></div>
+
+  <div class="say"><p>También se puede cambiar el color del sistema y activar el modo oscuro.</p></div>
+
+  <div class="do"><p>Tab "Sistema" → cambiar a tema Azul. Mostrar el cambio. Activar modo oscuro con el toggle. Volver a naranja y modo claro.</p></div>
+
+  <div class="highlight"><p>4 temas disponibles y modo oscuro completo. La preferencia se guarda automáticamente.</p></div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ESCENA 11 -->
+<h2>
+  <span class="scene-num">11</span>
+  Portal del Cliente
+  <span class="time">3 min</span>
+</h2>
+
+<div class="scene-box">
+  <div class="say"><p>Y ahora lo que hace especial a AutoTaller Pro: el portal para clientes. Los clientes del taller pueden consultar el estado de sus vehículos desde su celular sin necesidad de llamar.</p></div>
+
+  <div class="do"><p>Abrir nueva pestaña → ir a <span class="url">/portal/login</span></p></div>
+
+  <div class="say"><p>El cliente no necesita contraseña. Solo ingresa su DNI y el teléfono que tiene registrado en el taller.</p></div>
+
+  <div class="do"><p>Ingresar DNI <strong>87654321</strong> y teléfono <strong>998877665</strong>. Ingresar.</p></div>
+
+  <div class="do"><p>Mostrar el dashboard del portal: KPIs personales, vehículos con estado de OT, próximas citas.</p></div>
+
+  <div class="do"><p>Navegar por las pestañas: Mis Vehículos (con estado OT), Mis Órdenes (historial con servicios), Mis Facturas (con pagos).</p></div>
+
+  <h3>Agendar cita online</h3>
+  <div class="do"><p>Ir a "Mis Citas" → clic "Agendar Cita". Seleccionar vehículo, servicio, fecha. Agendar.</p></div>
+
+  <div class="say"><p>La cita queda como "Programada" y el taller la confirma desde el sistema interno. El cliente puede ver el estado actualizado en tiempo real.</p></div>
+
+  <div class="highlight"><p>El portal tiene su propio diseño: sin sidebar de administrador, navegación por pestañas, optimizado para celular. Es completamente independiente del sistema interno.</p></div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- CIERRE -->
+<h2>
+  <span class="scene-num">12</span>
+  Cierre de la Demo
+  <span class="time">2 min</span>
+</h2>
+
+<div class="scene-box">
+  <div class="say"><p>Hemos recorrido el flujo completo: desde el registro del cliente hasta la entrega del vehículo con factura pagada, pasando por inventario, agenda, reportes y el portal del cliente. Todo en un solo sistema web.</p></div>
+
+  <h3>Resumen de lo demostrado</h3>
+  <table>
+    <tr><th>Módulo</th><th>Lo que vimos</th></tr>
+    <tr><td>Dashboard</td><td>KPIs en tiempo real, citas del día</td></tr>
+    <tr><td>Clientes</td><td>Registro persona/empresa, modal detalle</td></tr>
+    <tr><td>Órdenes de Trabajo</td><td>Flujo completo: crear → servicios → estados → entrega</td></tr>
+    <tr><td>Facturación</td><td>Boleta/Factura automática, pagos parciales, IGV 18%</td></tr>
+    <tr><td>Inventario</td><td>Stock con alertas, movimientos</td></tr>
+    <tr><td>Agenda</td><td>Citas con calendario visual, disponibilidad mecánico</td></tr>
+    <tr><td>Reportes</td><td>Análisis ingresos, exportación PDF/Excel</td></tr>
+    <tr><td>Notificaciones</td><td>5 tipos automáticos, campana en tiempo real</td></tr>
+    <tr><td>Configuración</td><td>14 catálogos, 4 temas, modo oscuro</td></tr>
+    <tr><td>Portal Cliente</td><td>Login sin contraseña, estado vehículo, agendar citas</td></tr>
+  </table>
+
+  <div class="say"><p>¿Tienen alguna pregunta sobre alguna funcionalidad?</p></div>
+</div>
+
+<!-- TIMELINE -->
+<div class="timeline">
+  <h3>Línea de Tiempo de la Demo</h3>
+  <table>
+    <tr><th>Min</th><th>Escena</th><th>Duración</th></tr>
+    <tr><td>0:00</td><td>Bienvenida e ingreso al sistema</td><td>2 min</td></tr>
+    <tr><td>2:00</td><td>Dashboard — Vista general</td><td>2 min</td></tr>
+    <tr><td>4:00</td><td>Registro de cliente y vehículo</td><td>3 min</td></tr>
+    <tr><td>7:00</td><td>Crear orden de trabajo completa</td><td>4 min</td></tr>
+    <tr><td>11:00</td><td>Facturación y pagos</td><td>3 min</td></tr>
+    <tr><td>14:00</td><td>Inventario de repuestos</td><td>2 min</td></tr>
+    <tr><td>16:00</td><td>Agenda y citas</td><td>3 min</td></tr>
+    <tr><td>19:00</td><td>Reportes y exportación</td><td>2 min</td></tr>
+    <tr><td>21:00</td><td>Notificaciones + Configuración</td><td>2 min</td></tr>
+    <tr><td>23:00</td><td>Portal del cliente</td><td>3 min</td></tr>
+    <tr><td>26:00</td><td>Cierre y preguntas</td><td>—</td></tr>
+  </table>
+</div>
+
+<div class="tip"><p><strong>Tip para el presentador:</strong> Si el público muestra interés en un módulo específico, profundiza ahí y acorta otros. Lo más impactante suele ser la OT completa (escena 4) y el portal del cliente (escena 11).</p></div>
+
+<div class="footer">
+  <p><strong>AutoTaller Pro</strong> — Guion de Demostración v1.0</p>
+  <p>Marzo 2026</p>
+</div>
+
+</div>
+</body>
+</html>
