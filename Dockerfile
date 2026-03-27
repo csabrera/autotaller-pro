@@ -17,5 +17,6 @@ RUN cd apps/api && npx prisma generate && npx tsc || true
 # Build Frontend
 RUN cd apps/web && npx vite build
 
+WORKDIR /app/apps/api
 EXPOSE 3005
-CMD ["sh", "-c", "cd apps/api && npx prisma migrate deploy && (npx prisma db seed || true) && NODE_ENV=production node dist/server.js"]
+CMD npx prisma migrate deploy && npx prisma db seed; NODE_ENV=production node dist/server.js
