@@ -1,0 +1,41 @@
+{
+  "name": "@autotaller/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio",
+    "db:generate": "prisma generate"
+  },
+  "dependencies": {
+    "@autotaller/shared": "*",
+    "@fastify/cors": "^11",
+    "@fastify/rate-limit": "^10",
+    "@fastify/swagger": "^9",
+    "@fastify/swagger-ui": "^5",
+    "@prisma/client": "^6",
+    "bcrypt": "^6",
+    "exceljs": "^4.4.0",
+    "fastify": "^5",
+    "jsonwebtoken": "^9",
+    "pdfkit": "^0.18.0",
+    "pdfmake": "^0.3.7",
+    "zod": "^3.24"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5",
+    "@types/jsonwebtoken": "^9",
+    "@types/pdfmake": "^0.3.2",
+    "prisma": "^6",
+    "tsx": "^4",
+    "typescript": "^5.7"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  }
+}

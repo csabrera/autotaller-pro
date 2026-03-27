@@ -1,0 +1,670 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =============================================
+// MODULO 1: AUTH & USUARIOS
+// =============================================
+
+model Rol {
+  id          String   @id @default(uuid())
+  nombre      String   @unique
+  descripcion String?
+  activo      Boolean  @default(true)
+  creadoEn    DateTime @default(now()) @map("creado_en")
+
+  usuarios  Usuario[]
+  permisos  PermisoRol[]
+
+  @@map("roles")
+}
+
+model PermisoRol {
+  id             String  @id @default(uuid())
+  rolId          String  @map("rol_id")
+  modulo         String
+  puedeCrear     Boolean @default(false) @map("puede_crear")
+  puedeLeer      Boolean @default(true) @map("puede_leer")
+  puedeEditar    Boolean @default(false) @map("puede_editar")
+  puedeEliminar  Boolean @default(false) @map("puede_eliminar")
+
+  rol Rol @relation(fields: [rolId], references: [id])
+
+  @@map("permisos_rol")
+}
+
+model Usuario {
+  id                 String   @id @default(uuid())
+  nombres            String
+  apellidoPaterno    String   @map("apellido_paterno")
+  apellidoMaterno    String   @map("apellido_materno")
+  tipoDocumento      String   @map("tipo_documento")
+  numeroDocumento    String   @unique @map("numero_documento")
+  telefono           String
+  direccion          String
+  correo             String?
+  claveHash          String   @map("clave_hash")
+  debeCambiarClave   Boolean  @default(true) @map("debe_cambiar_clave")
+  primerInicio       Boolean  @default(true) @map("primer_inicio")
+  rolId              String   @map("rol_id")
+  sucursalId         String   @map("sucursal_id")
+  activo             Boolean  @default(true)
+  creadoEn           DateTime @default(now()) @map("creado_en")
+  actualizadoEn      DateTime @updatedAt @map("actualizado_en")
+
+  rol       Rol       @relation(fields: [rolId], references: [id])
+  sucursal  Sucursal  @relation(fields: [sucursalId], references: [id])
+
+  otRecepcionista OrdenTrabajo[] @relation("OTRecepcionista")
+  otMecanico      OrdenTrabajo[] @relation("OTMecanico")
+
+  citasMecanico    Cita[]          @relation("CitaMecanico")
+  citasCreadas     Cita[]          @relation("CitaCreador")
+  notificaciones   Notificacion[]
+
+  @@map("usuarios")
+}
+
+model RegistroAuditoria {
+  id           String   @id @default(uuid())
+  usuarioId    String   @map("usuario_id")
+  accion       String
+  entidad      String
+  entidadId    String?  @map("entidad_id")
+  cambios      Json?
+  direccionIp  String?  @map("direccion_ip")
+  creadoEn     DateTime @default(now()) @map("creado_en")
+
+  @@map("registro_auditoria")
+}
+
+// =============================================
+// SISTEMA: SUCURSALES & CONFIGURACION
+// =============================================
+
+model Sucursal {
+  id           String   @id @default(uuid())
+  nombre       String
+  direccion    String
+  telefono     String?
+  esPrincipal  Boolean  @default(false) @map("es_principal")
+  activo       Boolean  @default(true)
+  creadoEn     DateTime @default(now()) @map("creado_en")
+
+  usuarios       Usuario[]
+  ordenesTrabajo OrdenTrabajo[] @relation("OTSucursal")
+  citas          Cita[]
+
+  @@map("sucursales")
+}
+
+model ConfiguracionSistema {
+  id            String   @id @default(uuid())
+  clave         String   @unique
+  valor         Json
+  grupo         String
+  descripcion   String?
+  actualizadoEn DateTime @updatedAt @map("actualizado_en")
+
+  @@map("configuracion_sistema")
+}
+
+// =============================================
+// MODULO 2: CLIENTES & VEHICULOS
+// =============================================
+
+model Cliente {
+  id                      String   @id @default(uuid())
+  tipoCliente             String   @map("tipo_cliente")
+  tipoDocumento           String   @map("tipo_documento")
+  numeroDocumento         String   @unique @map("numero_documento")
+
+  // Persona natural
+  nombres                 String?
+  apellidoPaterno         String?  @map("apellido_paterno")
+  apellidoMaterno         String?  @map("apellido_materno")
+
+  // Empresa
+  razonSocial             String?  @map("razon_social")
+  nombreComercial         String?  @map("nombre_comercial")
+
+  // Contacto empresa
+  contactoNombres         String?  @map("contacto_nombres")
+  contactoApellidoPaterno String?  @map("contacto_apellido_paterno")
+  contactoApellidoMaterno String?  @map("contacto_apellido_materno")
+  contactoCargo           String?  @map("contacto_cargo")
+  contactoTelefono        String?  @map("contacto_telefono")
+
+  // Comunes
+  telefono                String
+  direccion               String
+  correo                  String?
+  activo                  Boolean  @default(true)
+  creadoEn                DateTime @default(now()) @map("creado_en")
+  actualizadoEn           DateTime @updatedAt @map("actualizado_en")
+
+  vehiculos      Vehiculo[]
+  ordenesTrabajo OrdenTrabajo[]
+  cotizaciones   Cotizacion[] @relation("CotizacionCliente")
+  facturas       Factura[]    @relation("FacturaCliente")
+  citas          Cita[]
+
+  @@map("clientes")
+}
+
+model Vehiculo {
+  id                String   @id @default(uuid())
+  clienteId         String   @map("cliente_id")
+  marcaId           String   @map("marca_id")
+  modeloId          String   @map("modelo_id")
+  anio              Int
+  placa             String   @unique
+  vin               String?
+  colorId           String   @map("color_id")
+  combustibleId     String   @map("combustible_id")
+  transmisionId     String?  @map("transmision_id")
+  tipoVehiculoId    String?  @map("tipo_vehiculo_id")
+  kilometrajeActual Int      @default(0) @map("kilometraje_actual")
+  notas             String?
+  activo            Boolean  @default(true)
+  creadoEn          DateTime @default(now()) @map("creado_en")
+  actualizadoEn     DateTime @updatedAt @map("actualizado_en")
+
+  cliente       Cliente          @relation(fields: [clienteId], references: [id])
+  marca         CatMarca         @relation(fields: [marcaId], references: [id])
+  modelo        CatModelo        @relation(fields: [modeloId], references: [id])
+  color         CatColor         @relation(fields: [colorId], references: [id])
+  combustible   CatCombustible   @relation(fields: [combustibleId], references: [id])
+  transmision   CatTransmision?  @relation(fields: [transmisionId], references: [id])
+  tipoVehiculo  CatTipoVehiculo? @relation(fields: [tipoVehiculoId], references: [id])
+
+  ordenesTrabajo OrdenTrabajo[]
+  citas          Cita[]
+
+  @@map("vehiculos")
+}
+
+// =============================================
+// MODULO 4: SERVICIOS
+// =============================================
+
+model Servicio {
+  id               String   @id @default(uuid())
+  nombre           String
+  descripcion      String?
+  categoriaId      String   @map("categoria_id")
+  especialidadId   String?  @map("especialidad_id")
+  tipoServicio     String   @map("tipo_servicio")
+  precioBase       Decimal  @map("precio_base") @db.Decimal(10, 2)
+  horasEstimadas   Decimal? @map("horas_estimadas") @db.Decimal(4, 1)
+  intervaloKm      Int?     @map("intervalo_km")
+  intervaloMeses   Int?     @map("intervalo_meses")
+  activo           Boolean  @default(true)
+  creadoEn         DateTime @default(now()) @map("creado_en")
+  actualizadoEn    DateTime @updatedAt @map("actualizado_en")
+
+  categoria    CatCategoriaServicio @relation(fields: [categoriaId], references: [id])
+  especialidad CatEspecialidad?     @relation(fields: [especialidadId], references: [id])
+  citas        Cita[]
+
+  @@map("servicios")
+}
+
+// =============================================
+// MODULO 5: INVENTARIO & REPUESTOS
+// =============================================
+
+model Repuesto {
+  id              String   @id @default(uuid())
+  codigo          String   @unique
+  nombre          String
+  descripcion     String?
+  categoriaId     String   @map("categoria_id")
+  unidadId        String   @map("unidad_id")
+  stockActual     Int      @default(0) @map("stock_actual")
+  stockMinimo     Int      @default(0) @map("stock_minimo")
+  stockMaximo     Int      @default(0) @map("stock_maximo")
+  costoPromedio   Decimal  @default(0) @map("costo_promedio") @db.Decimal(10, 2)
+  precioVenta     Decimal  @default(0) @map("precio_venta") @db.Decimal(10, 2)
+  ubicacion       String?
+  activo          Boolean  @default(true)
+  creadoEn        DateTime @default(now()) @map("creado_en")
+  actualizadoEn   DateTime @updatedAt @map("actualizado_en")
+
+  categoria   CatCategoriaRepuesto @relation(fields: [categoriaId], references: [id])
+  unidad      CatUnidad            @relation(fields: [unidadId], references: [id])
+  movimientos MovimientoStock[]
+
+  @@map("repuestos")
+}
+
+model Proveedor {
+  id        String   @id @default(uuid())
+  nombre    String
+  contacto  String?
+  telefono  String?
+  correo    String?
+  direccion String?
+  ruc       String?
+  activo    Boolean  @default(true)
+  creadoEn  DateTime @default(now()) @map("creado_en")
+
+  @@map("proveedores")
+}
+
+model MovimientoStock {
+  id          String   @id @default(uuid())
+  repuestoId  String   @map("repuesto_id")
+  tipo        String
+  cantidad    Int
+  referencia  String?
+  usuarioId   String   @map("usuario_id")
+  creadoEn    DateTime @default(now()) @map("creado_en")
+
+  repuesto Repuesto @relation(fields: [repuestoId], references: [id])
+
+  @@map("movimientos_stock")
+}
+
+// =============================================
+// MODULO 7: FACTURACION & FINANZAS
+// =============================================
+
+model Cotizacion {
+  id              String   @id @default(uuid())
+  numeroCotizacion String  @unique @map("numero_cotizacion")
+  ordenTrabajoId  String   @map("orden_trabajo_id")
+  clienteId       String   @map("cliente_id")
+  subtotal        Decimal  @db.Decimal(12, 2)
+  tasaImpuesto    Decimal  @default(18) @map("tasa_impuesto") @db.Decimal(5, 2)
+  montoImpuesto   Decimal  @map("monto_impuesto") @db.Decimal(12, 2)
+  descuento       Decimal  @default(0) @db.Decimal(12, 2)
+  total           Decimal  @db.Decimal(12, 2)
+  estado          String   @default("BORRADOR")
+  validaHasta     DateTime? @map("valida_hasta")
+  aprobadaEn      DateTime? @map("aprobada_en")
+  creadoEn        DateTime @default(now()) @map("creado_en")
+
+  cliente Cliente @relation("CotizacionCliente", fields: [clienteId], references: [id])
+
+  @@map("cotizaciones")
+}
+
+model Factura {
+  id              String   @id @default(uuid())
+  numeroFactura   String   @unique @map("numero_factura")
+  ordenTrabajoId  String   @map("orden_trabajo_id")
+  clienteId       String   @map("cliente_id")
+  tipoDocumento   String   @map("tipo_documento")
+  subtotal        Decimal  @db.Decimal(12, 2)
+  tasaImpuesto    Decimal  @default(18) @map("tasa_impuesto") @db.Decimal(5, 2)
+  montoImpuesto   Decimal  @map("monto_impuesto") @db.Decimal(12, 2)
+  descuento       Decimal  @default(0) @db.Decimal(12, 2)
+  total           Decimal  @db.Decimal(12, 2)
+  estado          String   @default("BORRADOR")
+  emitidaEn       DateTime? @map("emitida_en")
+  creadoEn        DateTime @default(now()) @map("creado_en")
+
+  cliente Cliente  @relation("FacturaCliente", fields: [clienteId], references: [id])
+  pagos   Pago[]
+
+  @@map("facturas")
+}
+
+model Pago {
+  id              String   @id @default(uuid())
+  facturaId       String   @map("factura_id")
+  metodoPagoId    String   @map("metodo_pago_id")
+  monto           Decimal  @db.Decimal(12, 2)
+  referencia      String?
+  notas           String?
+  recibidoPorId   String   @map("recibido_por_id")
+  pagadoEn        DateTime @default(now()) @map("pagado_en")
+
+  factura    Factura      @relation(fields: [facturaId], references: [id])
+  metodoPago CatMetodoPago @relation(fields: [metodoPagoId], references: [id])
+
+  @@map("pagos")
+}
+
+// =============================================
+// MODULO 3: ORDENES DE TRABAJO
+// =============================================
+
+model OrdenTrabajo {
+  id                  String    @id @default(uuid())
+  numeroOrden         String    @unique @map("numero_orden")
+  vehiculoId          String    @map("vehiculo_id")
+  clienteId           String    @map("cliente_id")
+  recepcionistaId     String    @map("recepcionista_id")
+  mecanicoAsignadoId  String?   @map("mecanico_asignado_id")
+  sucursalId          String    @map("sucursal_id")
+  estado              String    @default("RECIBIDO")
+  kilometrajeEntrada  Int       @map("kilometraje_entrada")
+  fechaEntrada        DateTime  @default(now()) @map("fecha_entrada")
+  fechaEstimada       DateTime? @map("fecha_estimada")
+  fechaEntrega        DateTime? @map("fecha_entrega")
+  notasCliente        String?   @map("notas_cliente")
+  notasInternas       String?   @map("notas_internas")
+  diagnostico         String?
+  costoTotal          Decimal   @default(0) @map("costo_total") @db.Decimal(12, 2)
+  creadoEn            DateTime  @default(now()) @map("creado_en")
+  actualizadoEn       DateTime  @updatedAt @map("actualizado_en")
+
+  vehiculo        Vehiculo   @relation(fields: [vehiculoId], references: [id])
+  cliente         Cliente    @relation(fields: [clienteId], references: [id])
+  recepcionista   Usuario    @relation("OTRecepcionista", fields: [recepcionistaId], references: [id])
+  mecanicoAsignado Usuario?  @relation("OTMecanico", fields: [mecanicoAsignadoId], references: [id])
+  sucursal        Sucursal   @relation("OTSucursal", fields: [sucursalId], references: [id])
+
+  servicios       OTServicio[]
+  repuestos       OTRepuesto[]
+  checklist       OTChecklist[]
+  evidencias      OTEvidencia[]
+  historialEstados OTHistorialEstado[]
+
+  @@map("ordenes_trabajo")
+}
+
+model OTServicio {
+  id              String  @id @default(uuid())
+  ordenTrabajoId  String  @map("orden_trabajo_id")
+  servicioNombre  String  @map("servicio_nombre")
+  servicioTipo    String  @map("servicio_tipo")
+  mecanicoId      String? @map("mecanico_id")
+  cantidad        Int     @default(1)
+  precioUnitario  Decimal @map("precio_unitario") @db.Decimal(10, 2)
+  subtotal        Decimal @db.Decimal(12, 2)
+  notas           String?
+  estado          String  @default("PENDIENTE")
+
+  ordenTrabajo OrdenTrabajo @relation(fields: [ordenTrabajoId], references: [id])
+
+  @@map("ot_servicios")
+}
+
+model OTRepuesto {
+  id              String  @id @default(uuid())
+  ordenTrabajoId  String  @map("orden_trabajo_id")
+  repuestoNombre  String  @map("repuesto_nombre")
+  cantidad        Int
+  costoUnitario   Decimal @map("costo_unitario") @db.Decimal(10, 2)
+  subtotal        Decimal @db.Decimal(12, 2)
+
+  ordenTrabajo OrdenTrabajo @relation(fields: [ordenTrabajoId], references: [id])
+
+  @@map("ot_repuestos")
+}
+
+model OTChecklist {
+  id              String  @id @default(uuid())
+  ordenTrabajoId  String  @map("orden_trabajo_id")
+  item            String
+  marcado         Boolean @default(false)
+  notas           String?
+  creadoEn        DateTime @default(now()) @map("creado_en")
+
+  ordenTrabajo OrdenTrabajo @relation(fields: [ordenTrabajoId], references: [id])
+
+  @@map("ot_checklist")
+}
+
+model OTEvidencia {
+  id              String   @id @default(uuid())
+  ordenTrabajoId  String   @map("orden_trabajo_id")
+  urlImagen       String   @map("url_imagen")
+  tipo            String
+  descripcion     String?
+  subidoEn        DateTime @default(now()) @map("subido_en")
+
+  ordenTrabajo OrdenTrabajo @relation(fields: [ordenTrabajoId], references: [id])
+
+  @@map("ot_evidencias")
+}
+
+model OTHistorialEstado {
+  id              String   @id @default(uuid())
+  ordenTrabajoId  String   @map("orden_trabajo_id")
+  estadoAnterior  String   @map("estado_anterior")
+  estadoNuevo     String   @map("estado_nuevo")
+  cambiadoPorId   String   @map("cambiado_por_id")
+  notas           String?
+  cambiadoEn      DateTime @default(now()) @map("cambiado_en")
+
+  ordenTrabajo OrdenTrabajo @relation(fields: [ordenTrabajoId], references: [id])
+
+  @@map("ot_historial_estados")
+}
+
+// =============================================
+// MODULO 8: AGENDA & CITAS
+// =============================================
+
+model Cita {
+  id               String    @id @default(uuid())
+  numeroCita       String    @unique @map("numero_cita")
+  clienteId        String    @map("cliente_id")
+  vehiculoId       String    @map("vehiculo_id")
+  servicioId       String?   @map("servicio_id")
+  mecanicoId       String?   @map("mecanico_id")
+  sucursalId       String    @map("sucursal_id")
+  fechaProgramada  DateTime  @map("fecha_programada") @db.Timestamptz()
+  duracionMinutos  Int       @default(60) @map("duracion_minutos")
+  estado           String    @default("PROGRAMADA")
+  notas            String?
+  creadoPorId      String    @map("creado_por_id")
+  creadoEn         DateTime  @default(now()) @map("creado_en") @db.Timestamptz()
+  actualizadoEn    DateTime  @updatedAt @map("actualizado_en") @db.Timestamptz()
+
+  cliente   Cliente   @relation(fields: [clienteId], references: [id])
+  vehiculo  Vehiculo  @relation(fields: [vehiculoId], references: [id])
+  servicio  Servicio? @relation(fields: [servicioId], references: [id])
+  mecanico  Usuario?  @relation("CitaMecanico", fields: [mecanicoId], references: [id])
+  sucursal  Sucursal  @relation(fields: [sucursalId], references: [id])
+  creadoPor Usuario   @relation("CitaCreador", fields: [creadoPorId], references: [id])
+
+  @@map("citas")
+}
+
+// =============================================
+// MODULO 9: NOTIFICACIONES
+// =============================================
+
+model Notificacion {
+  id         String   @id @default(uuid())
+  usuarioId  String   @map("usuario_id")
+  tipo       String   @default("SISTEMA")
+  titulo     String   @db.VarChar(255)
+  mensaje    String
+  leida      Boolean  @default(false)
+  enlace     String?  @db.VarChar(255)
+  creadoEn   DateTime @default(now()) @map("creado_en") @db.Timestamptz()
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@index([usuarioId, leida])
+  @@map("notificaciones")
+}
+
+// =============================================
+// CATALOGOS VEHICULARES
+// =============================================
+
+model CatMarca {
+  id          String   @id @default(uuid())
+  nombre      String   @unique
+  pais        String?
+  descripcion String?
+  activo      Boolean  @default(true)
+  orden       Int      @default(0)
+  creadoEn    DateTime @default(now()) @map("creado_en")
+
+  modelos   CatModelo[]
+  vehiculos Vehiculo[]
+
+  @@map("cat_marcas")
+}
+
+model CatModelo {
+  id          String   @id @default(uuid())
+  nombre      String
+  marcaId     String   @map("marca_id")
+  descripcion String?
+  activo      Boolean  @default(true)
+  orden       Int      @default(0)
+  creadoEn    DateTime @default(now()) @map("creado_en")
+
+  marca     CatMarca   @relation(fields: [marcaId], references: [id])
+  vehiculos Vehiculo[]
+
+  @@unique([nombre, marcaId])
+  @@map("cat_modelos")
+}
+
+model CatTipoVehiculo {
+  id          String   @id @default(uuid())
+  nombre      String   @unique
+  descripcion String?
+  activo      Boolean  @default(true)
+  orden       Int      @default(0)
+  creadoEn    DateTime @default(now()) @map("creado_en")
+
+  vehiculos Vehiculo[]
+
+  @@map("cat_tipos_vehiculo")
+}
+
+model CatColor {
+  id          String   @id @default(uuid())
+  nombre      String   @unique
+  descripcion String?
+  activo      Boolean  @default(true)
+  orden       Int      @default(0)
+  creadoEn    DateTime @default(now()) @map("creado_en")
+
+  vehiculos Vehiculo[]
+
+  @@map("cat_colores")
+}
+
+model CatCombustible {
+  id          String   @id @default(uuid())
+  nombre      String   @unique
+  descripcion String?
+  activo      Boolean  @default(true)
+  orden       Int      @default(0)
+  creadoEn    DateTime @default(now()) @map("creado_en")
+
+  vehiculos Vehiculo[]
+
+  @@map("cat_combustibles")
+}
+
+model CatTransmision {
+  id          String   @id @default(uuid())
+  nombre      String   @unique
+  descripcion String?
+  activo      Boolean  @default(true)
+  orden       Int      @default(0)
+  creadoEn    DateTime @default(now()) @map("creado_en")
+
+  vehiculos Vehiculo[]
+
+  @@map("cat_transmisiones")
+}
+
+// =============================================
+// CATALOGOS OPERATIVOS
+// =============================================
+
+model CatCategoriaServicio {
+  id          String   @id @default(uuid())
+  nombre      String   @unique
+  descripcion String?
+  activo      Boolean  @default(true)
+  orden       Int      @default(0)
+  creadoEn    DateTime @default(now()) @map("creado_en")
+
+  servicios Servicio[]
+
+  @@map("cat_categorias_servicio")
+}
+
+model CatEspecialidad {
+  id          String   @id @default(uuid())
+  nombre      String   @unique
+  descripcion String?
+  activo      Boolean  @default(true)
+  orden       Int      @default(0)
+  creadoEn    DateTime @default(now()) @map("creado_en")
+
+  servicios Servicio[]
+
+  @@map("cat_especialidades")
+}
+
+model CatMetodoPago {
+  id          String   @id @default(uuid())
+  nombre      String   @unique
+  descripcion String?
+  activo      Boolean  @default(true)
+  orden       Int      @default(0)
+  creadoEn    DateTime @default(now()) @map("creado_en")
+
+  pagos Pago[]
+
+  @@map("cat_metodos_pago")
+}
+
+model CatTipoDocFiscal {
+  id          String   @id @default(uuid())
+  nombre      String   @unique
+  descripcion String?
+  activo      Boolean  @default(true)
+  orden       Int      @default(0)
+  creadoEn    DateTime @default(now()) @map("creado_en")
+
+  @@map("cat_tipos_doc_fiscal")
+}
+
+model CatUnidad {
+  id          String   @id @default(uuid())
+  nombre      String   @unique
+  descripcion String?
+  activo      Boolean  @default(true)
+  orden       Int      @default(0)
+  creadoEn    DateTime @default(now()) @map("creado_en")
+
+  repuestos Repuesto[]
+
+  @@map("cat_unidades")
+}
+
+model CatMotivoDescuento {
+  id          String   @id @default(uuid())
+  nombre      String   @unique
+  descripcion String?
+  activo      Boolean  @default(true)
+  orden       Int      @default(0)
+  creadoEn    DateTime @default(now()) @map("creado_en")
+
+  @@map("cat_motivos_descuento")
+}
+
+model CatCategoriaRepuesto {
+  id          String   @id @default(uuid())
+  nombre      String   @unique
+  descripcion String?
+  activo      Boolean  @default(true)
+  orden       Int      @default(0)
+  creadoEn    DateTime @default(now()) @map("creado_en")
+
+  repuestos Repuesto[]
+
+  @@map("cat_categorias_repuesto")
+}

@@ -1,0 +1,23 @@
+{
+  "name": "autotaller-pro",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "db:migrate": "npm run -w apps/api db:migrate",
+    "db:seed": "npm run -w apps/api db:seed",
+    "db:studio": "npm run -w apps/api db:studio",
+    "db:generate": "npm run -w apps/api db:generate"
+  },
+  "devDependencies": {
+    "turbo": "^2"
+  },
+  "packageManager": "npm@11.6.2"
+}
