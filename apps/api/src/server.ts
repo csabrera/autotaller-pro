@@ -52,7 +52,6 @@ if (process.env.NODE_ENV === 'production') {
   await app.register(fastifyStatic, {
     root: frontendPath,
     prefix: '/',
-    decorateReply: false,
   });
 
   // SPA fallback: rutas que no son /api devuelven index.html
