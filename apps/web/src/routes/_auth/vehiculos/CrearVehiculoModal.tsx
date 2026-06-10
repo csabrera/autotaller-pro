@@ -5,23 +5,31 @@ import { crearVehiculoAPI, type ClienteItem } from '@/services/clientes.service'
 import { listarCatalogoAPI, type CatalogoItem } from '@/services/catalogos.service';
 import { SearchSelect } from '@/components/forms/SearchSelect';
 
-// Placa Perú: ABC-123 (actual) o AB-1234 (antiguo)
-const PLACA_REGEX = /^[A-Z]{2,3}-?\d{3,4}$/;
+// Placa Perú: acepta autos y motos (alfanumérica, 6-7 caracteres con al
+// menos una letra y un dígito). Ej: ABC-123, AB-1234, F70-446, A1B-234.
 function validarPlacaPeru(placa: string): boolean {
   const limpia = placa.replace(/-/g, '');
-  if (limpia.length < 6 || limpia.length > 7) return false;
-  return PLACA_REGEX.test(placa);
+  if (!/^[A-Z0-9]{6,7}$/.test(limpia)) return false; // 6-7 alfanuméricos
+  if (!/[A-Z]/.test(limpia)) return false; // al menos una letra
+  if (!/\d/.test(limpia)) return false; // al menos un dígito
+  return true;
 }
 
 function formatearPlaca(valor: string): string {
-  const limpio = valor.toUpperCase().replace(/[^A-Z0-9]/g, '');
-  if (limpio.length <= 3) return limpio;
-  const letras = limpio.match(/^[A-Z]+/)?.[0] || '';
-  const numeros = limpio.slice(letras.length);
-  if (letras.length >= 2 && numeros.length > 0) {
-    return `${letras}-${numeros}`.slice(0, 8);
+  const upper = valor.toUpperCase();
+  const guionIdx = upper.indexOf('-');
+  const alnum = upper.replace(/[^A-Z0-9]/g, '').slice(0, 7);
+  if (alnum.length <= 3) return alnum;
+  let corte: number;
+  if (guionIdx >= 0) {
+    // Respeta la posición del guion que escribió el usuario (ej. AB-1234)
+    corte = upper.slice(0, guionIdx).replace(/[^A-Z0-9]/g, '').length;
+    corte = Math.min(Math.max(corte, 1), alnum.length - 1);
+  } else {
+    // Sin guion: agrupa los últimos 3 (estándar peruano XXX-NNN)
+    corte = alnum.length - 3;
   }
-  return limpio.slice(0, 7);
+  return `${alnum.slice(0, corte)}-${alnum.slice(corte)}`;
 }
 
 interface Props {
@@ -100,7 +108,7 @@ export function CrearVehiculoModal({ cliente, onClose, onCreated }: Props) {
     const e: Errores = {};
 
     if (!placa) e.placa = 'La placa es requerida';
-    else if (!validarPlacaPeru(placa)) e.placa = 'Formato inválido. Ej: ABC-123 o AB-1234';
+    else if (!validarPlacaPeru(placa)) e.placa = 'Formato inválido. Ej: ABC-123, AB-1234 o F70-446';
 
     if (!marcaId) e.marcaId = 'Seleccione una marca';
     if (!modeloId) e.modeloId = 'Seleccione un modelo';
@@ -180,7 +188,7 @@ export function CrearVehiculoModal({ cliente, onClose, onCreated }: Props) {
                 className={inputClass(errores.placa)}
               />
               {errores.placa && <p className="mt-1 text-xs text-error">{errores.placa}</p>}
-              <p className="mt-0.5 text-[10px] text-text-muted">Formato: ABC-123 (actual) o AB-1234 (antiguo)</p>
+              <p className="mt-0.5 text-[10px] text-text-muted">Autos y motos: 6 o 7 caracteres. Ej: ABC-123, F70-446</p>
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-text-secondary">N° Serie / VIN (opcional)</label>
