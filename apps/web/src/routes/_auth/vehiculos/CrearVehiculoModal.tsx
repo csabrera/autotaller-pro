@@ -16,20 +16,12 @@ function validarPlacaPeru(placa: string): boolean {
 }
 
 function formatearPlaca(valor: string): string {
-  const upper = valor.toUpperCase();
-  const guionIdx = upper.indexOf('-');
-  const alnum = upper.replace(/[^A-Z0-9]/g, '').slice(0, 7);
+  // Determinista: ignora cualquier guion previo (clave para inputs controlados,
+  // donde el valor ya formateado se realimenta en cada tecla) y reagrupa
+  // siempre los últimos 3 caracteres (estándar peruano XXX-NNN).
+  const alnum = valor.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 7);
   if (alnum.length <= 3) return alnum;
-  let corte: number;
-  if (guionIdx >= 0) {
-    // Respeta la posición del guion que escribió el usuario (ej. AB-1234)
-    corte = upper.slice(0, guionIdx).replace(/[^A-Z0-9]/g, '').length;
-    corte = Math.min(Math.max(corte, 1), alnum.length - 1);
-  } else {
-    // Sin guion: agrupa los últimos 3 (estándar peruano XXX-NNN)
-    corte = alnum.length - 3;
-  }
-  return `${alnum.slice(0, corte)}-${alnum.slice(corte)}`;
+  return `${alnum.slice(0, alnum.length - 3)}-${alnum.slice(-3)}`;
 }
 
 interface Props {
